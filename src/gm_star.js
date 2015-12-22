@@ -54,7 +54,6 @@
         this.$timeout(this._initLate.bind(this));
     };
 
-
     /**
      * Init states after running the first watch loop (so we can trigger
      * another).
@@ -100,6 +99,8 @@
             this._cancelResetTimeout();
 
             this._stateIdx = idx; 
+            this._nextStateIdx = (this._stateIdx + 1) % STATES.length;
+
             this._stateCss = STATE_CSS_NAMES[state];
 
             this._scheduleReset();
@@ -129,8 +130,6 @@
     gmStarController.prototype.nextState = function() {
         this._stateIdx = this._nextStateIdx;
         this.state = STATES[this._stateIdx];
-
-        this._nextStateIdx = (this._stateIdx + 1) % STATES.length;
 
         this.triggerOnChange();
     };
