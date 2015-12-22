@@ -1,0 +1,16 @@
+{
+  "name": "Stars demo",
+  "authors": [
+    "Peter Morihladko <morihladko@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4.8",
+    "lodash": "~3.10.1",
+    "bootstrap": "~3.3.6"
+  }
+}

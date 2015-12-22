@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html ng-app="starDemo">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+
+    <link rel="stylesheet" href="../src/gm_star.css">
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron m-t-2" ng-controller="appController as app">
+            <h1>Jarda's star demo</h1>
+
+            <p style="font-size: 3rem">
+                <gm-star state="app.state" on-change="app.changeState($state)">
+                </gm-star>
+            </p>
+
+            <p>
+                State: {{ app.state }}
+            </p>
+        </div>
+    </div>
+
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/lodash/lodash.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+
+    <script src="../src/gm_star.js"></script>
+
+    <script src="app.js"></script>
+</body>
+</html>

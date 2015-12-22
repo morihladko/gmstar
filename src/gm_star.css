@@ -1,0 +1,34 @@
+.gm__star {
+    display: inline-block;
+
+    width: 1em;
+    height: 1em;
+
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.gm__star:hover {
+    opacity: 0.8;
+}
+
+.gm__star-state-1 {
+    color: red;
+}
+
+.gm__star-state-2 {
+    color: green;
+}
+
+.gm__star-state-3 {
+    color: blue;
+}
+
+.gm__star-state-4 {
+    color: pink;
+}
+
+.gm__star-state-5 {
+    color: yellow;
+}
