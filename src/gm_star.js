@@ -3,25 +3,22 @@
 
     angular.module('gm.star', [])
         .directive('gmStar', gmStarDirective)
-        .controller(gmStarController.name, gmStarController);
-
-    var STATES = [
-        'state-0',
-        'state-1',
-        'state-2',
-        'state-3',
-        'state-4',
-        'state-5'
-    ];
-
-    var STATE_CSS_NAMES = {
-        'state-0': '',
-        'state-1': 'gm__star-state-1',
-        'state-2': 'gm__star-state-2',
-        'state-3': 'gm__star-state-3',
-        'state-4': 'gm__star-state-4',
-        'state-5': 'gm__star-state-5'
-    };
+        .controller(GmStarController.name, GmStarController)
+        .constant('GM_STAR_STATES', [
+            'state-0',
+            'state-1',
+            'state-2',
+            'state-3',
+            'state-4',
+        ])
+        .constant('GM_STAR_CSS_NAMES', {
+            'state-0': '',
+            'state-1': 'gm__star-state-1',
+            'state-2': 'gm__star-state-2',
+            'state-3': 'gm__star-state-3',
+            'state-4': 'gm__star-state-4',
+            'state-5': 'gm__star-state-5'
+        });
 
     var RESET_AFTER = 2000;
 
@@ -29,19 +26,23 @@
         return {
             restrict: 'EA',
             scope: {},
-            controller: gmStarController.name,
+            controller: GmStarController.name,
             controllerAs: 'ctrl',
             bindToController: {
                 'state': '=',
-                'onChange': '&?'
+                'onChange': '&?',
+                'onSave': '&?'
             },
             template:'<div class="gm__star" ng-class="ctrl._stateCss" ng-click="ctrl.click($event)">★</div>'
         }
     }
 
-    function gmStarController($timeout, $scope) {
+    function GmStarController($timeout, $scope, GM_STAR_STATES, GM_STAR_CSS_NAMES) {
         this.$timeout = $timeout;
         this.$scope   = $scope;
+
+        this.GM_STAR_STATES    = GM_STAR_STATES;
+        this.GM_STAR_CSS_NAMES = GM_STAR_CSS_NAMES;
 
         this._init();
         this._initWatch();
@@ -50,7 +51,9 @@
     /**
      * Init controller variables
      */
-    gmStarController.prototype._init = function() {
+    GmStarController.prototype._init = function() {
+        this._innerState = this.state;
+
         this.$timeout(this._initLate.bind(this));
     };
 
@@ -58,11 +61,11 @@
      * Init states after running the first watch loop (so we can trigger
      * another).
      */
-    gmStarController.prototype._initLate = function() {
+    GmStarController.prototype._initLate = function() {
         if (this._stateIdx === undefined) {
             this._stateIdx = 0;
 
-            this.state = STATES[this._stateIdx];
+            this._innerState = this.GM_STAR_STATES[this._stateIdx];
             this.triggerOnChange();
         }
     };
@@ -70,10 +73,10 @@
     /**
      * Init watchers.
      */
-    gmStarController.prototype._initWatch = function() {
+    GmStarController.prototype._initWatch = function() {
         var self = this;
 
-        this.$scope.$watch('ctrl.state', function(state) {
+        this.$scope.$watch('ctrl._innerState', function(state) {
             self._watchChangeState(state);    
         });
     };
@@ -83,7 +86,7 @@
      * 
      * @param {Event} $event mouse event
      */
-    gmStarController.prototype.click = function($event) {
+    GmStarController.prototype.click = function($event) {
         this.nextState();
     };
 
@@ -92,34 +95,41 @@
      *
      * @param {Strign} state state name
      */
-    gmStarController.prototype._watchChangeState = function(state) {
-        var idx = STATES.indexOf(state);
+    GmStarController.prototype._watchChangeState = function(state) {
+        var idx = this.GM_STAR_STATES.indexOf(state);
 
         if (idx > -1) {
-            this._cancelResetTimeout();
+            this._cancelSaveTimeout();
+
+            // don't trigger save if state is defined (on the first run)
+            if (!_.isUndefined(this._stateIdx)) {
+                this._scheduleSave();
+            }
 
             this._stateIdx = idx; 
-            this._nextStateIdx = (this._stateIdx + 1) % STATES.length;
+            this._nextStateIdx = (this._stateIdx + 1) % this.GM_STAR_STATES.length;
 
-            this._stateCss = STATE_CSS_NAMES[state];
+            this._stateCss = this.GM_STAR_CSS_NAMES[state];
 
-            this._scheduleReset();
         }
     };
 
-    gmStarController.prototype._cancelResetTimeout = function() {
-        console.log('Canceling timeout');
-        this.$timeout.cancel(this._resetTimeout);
+    GmStarController.prototype._cancelSaveTimeout = function() {
+        this.$timeout.cancel(this._saveTimeout);
     };
 
-    gmStarController.prototype._scheduleReset = function() {
-        console.log('Scheduling reset');
-        this._resetTimeout = this.$timeout(this.reset.bind(this), RESET_AFTER);
+    GmStarController.prototype._scheduleSave = function() {
+        this._saveTimeout = this.$timeout(this.save.bind(this), RESET_AFTER);
     };
 
-    gmStarController.prototype.reset = function() {
-        console.log('Reseting');
+    GmStarController.prototype.save = function() {
+        if (_.isFunction(this.onSave)) {
+            this.onSave({$state: this._innerState});
+        }
 
+        this.state = this._innerState;
+
+        // reset the next state
         if (this._stateIdx > 0) {
             this._nextStateIdx = 0;
         } else {
@@ -127,16 +137,16 @@
         }
     };
 
-    gmStarController.prototype.nextState = function() {
+    GmStarController.prototype.nextState = function() {
         this._stateIdx = this._nextStateIdx;
-        this.state = STATES[this._stateIdx];
+        this._innerState = this.GM_STAR_STATES[this._stateIdx];
 
         this.triggerOnChange();
     };
 
-    gmStarController.prototype.triggerOnChange = function() {
+    GmStarController.prototype.triggerOnChange = function() {
         if (_.isFunction(this.onChange)) {
-            this.onChange({$state: this.state});
+            this.onChange({$state: this._innerState});
         }
     };
 })();
