@@ -53,21 +53,6 @@
      */
     AtmtStarController.prototype._init = function() {
         this._innerState = this.state;
-
-        this.$timeout(this._initLate.bind(this));
-    };
-
-    /**
-     * Init states after running the first watch loop (so we can trigger
-     * another).
-     */
-    AtmtStarController.prototype._initLate = function() {
-        if (this._stateIdx === undefined) {
-            this._stateIdx = 0;
-
-            this._innerState = this.GM_STAR_STATES[this._stateIdx];
-            this.triggerOnChange();
-        }
     };
 
     /**
@@ -96,21 +81,28 @@
      * @param {Strign} state state name
      */
     AtmtStarController.prototype._watchChangeState = function(state) {
-        var idx = this.GM_STAR_STATES.indexOf(state);
+        var idx = this.GM_STAR_STATES.indexOf(state),
+            firstTimeCheck = _.isUndefined(this._stateIdx);	
 
         if (idx > -1) {
             this._cancelSaveTimeout();
 
-            // don't trigger save if state is defined (on the first run)
-            if (!_.isUndefined(this._stateIdx)) {
+            if (!firstTimeCheck) {
                 this._scheduleSave();
             }
 
             this._stateIdx = idx; 
-            this._nextStateIdx = (this._stateIdx + 1) % this.GM_STAR_STATES.length;
+
+            if (firstTimeCheck) {
+                this._nextStateIdx = 0;
+            } else {
+                this._nextStateIdx = (this._stateIdx + 1) % this.GM_STAR_STATES.length;
+            }
 
             this._stateCss = this.GM_STAR_CSS_NAMES[state];
 
+        } else {
+            this._nextStateIdx = 1;
         }
     };
 
