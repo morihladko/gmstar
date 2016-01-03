@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('starDemo', ['gm.star'])
+    angular.module('starDemo', ['atmt.star'])
         .controller('appController', ['$scope', function($scope) {
             this.state = 'info';
 
@@ -16,9 +16,9 @@
         .constant('GM_STAR_STATES', ['debug', 'info', 'warn', 'error'])
         .constant('GM_STAR_CSS_NAMES', {
             'debug': '',
-            'info': 'gm__star-state-1',
-            'warn': 'gm__star-state-2',
-            'error': 'gm__star-state-3'
+            'info': 'atmt__star-state-1',
+            'warn': 'atmt__star-state-2',
+            'error': 'atmt__star-state-3'
         })
         .run(function() {});
 })();

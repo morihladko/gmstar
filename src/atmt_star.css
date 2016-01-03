@@ -1,4 +1,4 @@
-.gm__star {
+.atmt__star {
     display: inline-block;
 
     width: 1em;
@@ -9,26 +9,26 @@
     user-select: none;
 }
 
-.gm__star:hover {
+.atmt__star:hover {
     opacity: 0.8;
 }
 
-.gm__star-state-1 {
+.atmt__star-state-1 {
     color: red;
 }
 
-.gm__star-state-2 {
+.atmt__star-state-2 {
     color: green;
 }
 
-.gm__star-state-3 {
+.atmt__star-state-3 {
     color: blue;
 }
 
-.gm__star-state-4 {
+.atmt__star-state-4 {
     color: pink;
 }
 
-.gm__star-state-5 {
+.atmt__star-state-5 {
     color: yellow;
 }

@@ -1,9 +1,9 @@
 (function() {
     'use strict';
 
-    angular.module('gm.star', [])
-        .directive('gmStar', gmStarDirective)
-        .controller(GmStarController.name, GmStarController)
+    angular.module('atmt.star', [])
+        .directive('atmtStar', atmtStarDirective)
+        .controller(AtmtStarController.name, AtmtStarController)
         .constant('GM_STAR_STATES', [
             'state-0',
             'state-1',
@@ -13,31 +13,31 @@
         ])
         .constant('GM_STAR_CSS_NAMES', {
             'state-0': '',
-            'state-1': 'gm__star-state-1',
-            'state-2': 'gm__star-state-2',
-            'state-3': 'gm__star-state-3',
-            'state-4': 'gm__star-state-4',
-            'state-5': 'gm__star-state-5'
+            'state-1': 'atmt__star-state-1',
+            'state-2': 'atmt__star-state-2',
+            'state-3': 'atmt__star-state-3',
+            'state-4': 'atmt__star-state-4',
+            'state-5': 'atmt__star-state-5'
         });
 
     var RESET_AFTER = 2000;
 
-    function gmStarDirective() {
+    function atmtStarDirective() {
         return {
             restrict: 'EA',
             scope: {},
-            controller: GmStarController.name,
+            controller: AtmtStarController.name,
             controllerAs: 'ctrl',
             bindToController: {
                 'state': '=',
                 'onChange': '&?',
                 'onSave': '&?'
             },
-            template:'<div class="gm__star" ng-class="ctrl._stateCss" ng-click="ctrl.click($event)">★</div>'
+            template:'<div class="atmt__star" ng-class="ctrl._stateCss" ng-click="ctrl.click($event)">★</div>'
         }
     }
 
-    function GmStarController($timeout, $scope, GM_STAR_STATES, GM_STAR_CSS_NAMES) {
+    function AtmtStarController($timeout, $scope, GM_STAR_STATES, GM_STAR_CSS_NAMES) {
         this.$timeout = $timeout;
         this.$scope   = $scope;
 
@@ -51,7 +51,7 @@
     /**
      * Init controller variables
      */
-    GmStarController.prototype._init = function() {
+    AtmtStarController.prototype._init = function() {
         this._innerState = this.state;
 
         this.$timeout(this._initLate.bind(this));
@@ -61,7 +61,7 @@
      * Init states after running the first watch loop (so we can trigger
      * another).
      */
-    GmStarController.prototype._initLate = function() {
+    AtmtStarController.prototype._initLate = function() {
         if (this._stateIdx === undefined) {
             this._stateIdx = 0;
 
@@ -73,7 +73,7 @@
     /**
      * Init watchers.
      */
-    GmStarController.prototype._initWatch = function() {
+    AtmtStarController.prototype._initWatch = function() {
         var self = this;
 
         this.$scope.$watch('ctrl._innerState', function(state) {
@@ -86,7 +86,7 @@
      * 
      * @param {Event} $event mouse event
      */
-    GmStarController.prototype.click = function($event) {
+    AtmtStarController.prototype.click = function($event) {
         this.nextState();
     };
 
@@ -95,7 +95,7 @@
      *
      * @param {Strign} state state name
      */
-    GmStarController.prototype._watchChangeState = function(state) {
+    AtmtStarController.prototype._watchChangeState = function(state) {
         var idx = this.GM_STAR_STATES.indexOf(state);
 
         if (idx > -1) {
@@ -114,15 +114,15 @@
         }
     };
 
-    GmStarController.prototype._cancelSaveTimeout = function() {
+    AtmtStarController.prototype._cancelSaveTimeout = function() {
         this.$timeout.cancel(this._saveTimeout);
     };
 
-    GmStarController.prototype._scheduleSave = function() {
+    AtmtStarController.prototype._scheduleSave = function() {
         this._saveTimeout = this.$timeout(this.save.bind(this), RESET_AFTER);
     };
 
-    GmStarController.prototype.save = function() {
+    AtmtStarController.prototype.save = function() {
         if (_.isFunction(this.onSave)) {
             this.onSave({$state: this._innerState});
         }
@@ -137,14 +137,14 @@
         }
     };
 
-    GmStarController.prototype.nextState = function() {
+    AtmtStarController.prototype.nextState = function() {
         this._stateIdx = this._nextStateIdx;
         this._innerState = this.GM_STAR_STATES[this._stateIdx];
 
         this.triggerOnChange();
     };
 
-    GmStarController.prototype.triggerOnChange = function() {
+    AtmtStarController.prototype.triggerOnChange = function() {
         if (_.isFunction(this.onChange)) {
             this.onChange({$state: this._innerState});
         }
