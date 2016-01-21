@@ -62,7 +62,7 @@
         var self = this;
 
         this.$scope.$watch('ctrl._innerState', function(state) {
-            self._watchChangeState(state);    
+            self._watchChangeState(state.toString());
         });
     };
 
@@ -91,9 +91,9 @@
                 this._scheduleSave();
             }
 
-            this._stateIdx = idx; 
+            this._stateIdx = idx;
 
-            if (firstTimeCheck) {
+            if (firstTimeCheck && this._stateIdx > 0) {
                 this._nextStateIdx = 0;
             } else {
                 this._nextStateIdx = (this._stateIdx + 1) % this.GM_STAR_STATES.length;
